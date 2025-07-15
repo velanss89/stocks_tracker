@@ -1,0 +1,33 @@
+name: Update Stock Data
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'  # every 3 hours
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run refresh script
+        run: |
+          python stock_analysis.py
+
+      - name: Commit updated CSV
+        run: |
+          git config --global user.name "Sekar, Singaravelan"
+          git config --global user.email "velanss89@ymail.com"
+          git add stock_snapshot.csv
+          git commit -m "Updated CSV with latest market data"
+          git push
