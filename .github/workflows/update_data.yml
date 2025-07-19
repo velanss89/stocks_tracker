@@ -2,7 +2,7 @@ name: Update Stock Data
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # every 3 hours
+    - cron: '0 */12 * * *'  # every 12 hours
 
 jobs:
   refresh:
@@ -25,9 +25,12 @@ jobs:
           python stock_analysis.py
 
       - name: Commit updated CSV
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git config --global user.name "Sekar, Singaravelan"
           git config --global user.email "velanss89@ymail.com"
+          git remote set-url origin https://Sekar:${GH_PAT}@github.com/velanss89/stocks_tracker.git
           git add stock_snapshot.csv
           git commit -m "Updated CSV with latest market data"
           git push
