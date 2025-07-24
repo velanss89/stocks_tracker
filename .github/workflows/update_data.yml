@@ -24,13 +24,11 @@ jobs:
         run: |
           python stock_analysis.py
 
-      - name: Commit updated CSV
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+      - name: Push changes
         run: |
-          git config --global user.name "Sekar, Singaravelan"
-          git config --global user.email "velanss89@ymail.com"
-          git remote set-url origin https://Sekar:${GH_PAT}@github.com/velanss89/stocks_tracker.git
-          git add stock_snapshot.csv
-          git commit -m "Updated CSV with latest market data"
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/velanss89/stocks_tracker.git
+          git add .
+          git commit -m "Auto update"
           git push
