@@ -1,0 +1,37 @@
+name: Update Stock Data
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # every 12 hours
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check remote URL
+        run: git remote -v
+        
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run refresh script
+        run: |
+          python stock_analysis.py
+
+      - name: Push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/velanss89/stocks_tracker.git
+          git add .
+          git commit -m "Auto update"
+          git push origin HEAD
